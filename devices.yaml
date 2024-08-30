@@ -1,0 +1,13 @@
+devices:
+  - description: "Main Router RRI"
+    ip: "192.168.1.1"
+  - description: "Office PC"
+    ip: "192.168.1.2"
+  - description: "Google DNS"
+    ip: "8.8.8.8"
+  - description: "Cloudflare DNS"
+    ip: "1.1.1.1"
+  - description: "RRI PC"
+    ip: "192.168.1.203"
+  - description: "ETI C 25"
+    ip: "192.168.178.157"    
