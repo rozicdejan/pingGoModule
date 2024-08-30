@@ -26,3 +26,4 @@ TELEGRAM_CHAT_ID=your_chat_id
 ## Logging and Output
     Linux: You can redirect the output to a log file for later review:
     nohup ./ping_monitor > ping_monitor.log 2>&1 &
+    
