@@ -1,3 +1,5 @@
+use_telegram: true  # Set to false to disable Telegram notifications
+
 devices:
   - description: "Main Router RRI"
     ip: "192.168.1.1"
@@ -10,4 +12,4 @@ devices:
   - description: "RRI PC"
     ip: "192.168.1.203"
   - description: "ETI C 25"
-    ip: "192.168.178.157"    
+    ip: "192.168.178.157"
