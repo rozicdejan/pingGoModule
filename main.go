@@ -22,7 +22,8 @@ type Device struct {
 
 // Config struct for reading devices from the YAML file
 type Config struct {
-	Devices []Device `yaml:"devices"`
+	UseTelegram bool     `yaml:"use_telegram"`
+	Devices     []Device `yaml:"devices"`
 }
 
 // TelegramMessage struct to format the message payload
@@ -91,8 +92,8 @@ func sendTelegramMessage(botToken, chatID, message string) error {
 	return nil
 }
 
-// monitorDevices pings each device every 30 seconds, prints their statuses in a table, and sends a Telegram notification on status change
-func monitorDevices(devices []Device, botToken, chatID string) {
+// monitorDevices pings each device every 30 seconds, prints their statuses in a table, and sends a Telegram notification on status change (if enabled)
+func monitorDevices(config *Config, botToken, chatID string) {
 	statuses := make(map[string]string)
 
 	for {
@@ -105,7 +106,7 @@ func monitorDevices(devices []Device, botToken, chatID string) {
 
 		messageChanged := false
 
-		for _, device := range devices {
+		for _, device := range config.Devices {
 			isOnline := icmpPing(device.IP)
 			status := "offline"
 			statusEmoji := "🔴  " // Red circle for offline
@@ -126,8 +127,8 @@ func monitorDevices(devices []Device, botToken, chatID string) {
 			}
 		}
 
-		// Send the message if it's the first run or if there was a status change
-		if messageChanged || len(statuses) == 0 {
+		// Send the message if Telegram is enabled and it's the first run or if there was a status change
+		if config.UseTelegram && (messageChanged || len(statuses) == 0) {
 			message := messageBuilder.String()
 			err := sendTelegramMessage(botToken, chatID, message)
 			if err != nil {
@@ -142,22 +143,6 @@ func monitorDevices(devices []Device, botToken, chatID string) {
 }
 
 func main() {
-	// Load environment variables from .env file
-	err := godotenv.Load()
-	if err != nil {
-		fmt.Printf("Error loading .env file: %v\n", err)
-		return
-	}
-
-	// Retrieve bot token and chat ID from environment variables
-	botToken := os.Getenv("TELEGRAM_BOT_TOKEN")
-	chatID := os.Getenv("TELEGRAM_CHAT_ID")
-
-	if botToken == "" || chatID == "" {
-		fmt.Println("Telegram bot token or chat ID is missing in the environment variables")
-		return
-	}
-
 	// Load the device list from devices.yaml
 	config, err := readConfig("devices.yaml")
 	if err != nil {
@@ -165,8 +150,28 @@ func main() {
 		return
 	}
 
+	var botToken, chatID string
+
+	// Load environment variables only if Telegram is enabled
+	if config.UseTelegram {
+		err := godotenv.Load()
+		if err != nil {
+			fmt.Printf("Error loading .env file: %v\n", err)
+			return
+		}
+
+		// Retrieve bot token and chat ID from environment variables
+		botToken = os.Getenv("TELEGRAM_BOT_TOKEN")
+		chatID = os.Getenv("TELEGRAM_CHAT_ID")
+
+		if botToken == "" || chatID == "" {
+			fmt.Println("Telegram bot token or chat ID is missing in the environment variables")
+			return
+		}
+	}
+
 	// Monitor all devices in a single loop
-	monitorDevices(config.Devices, botToken, chatID)
+	monitorDevices(config, botToken, chatID)
 
 	// Keep the main function running (not necessary here since monitorDevices blocks)
 	select {}
