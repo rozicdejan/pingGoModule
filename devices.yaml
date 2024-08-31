@@ -1,4 +1,4 @@
-use_telegram: true  # Set to false to disable Telegram notifications
+use_telegram: false  # Set to false to disable Telegram notifications
 
 devices:
   - description: "Main Router RRI"
