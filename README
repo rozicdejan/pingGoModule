@@ -4,6 +4,8 @@ TELEGRAM_BOT_TOKEN=your_bot_token
 TELEGRAM_CHAT_ID=your_chat_id
 
 # 2 Edit device.yaml file
+    add description
+    add IP addr
 # 3 run ping_monitor or. ping_monitor.exe
 
 
