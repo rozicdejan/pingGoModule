@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  ping_monitor:
+    image: ping_monitor:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./devices.yaml:/root/devices.yaml
+      - ./env_files/.env:/root/.env
+    restart: unless-stopped
