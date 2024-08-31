@@ -8,5 +8,5 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./devices.yaml:/root/devices.yaml
-      - ./env_files/.env:/root/.env
+      - .env:/root/.env
     restart: unless-stopped
